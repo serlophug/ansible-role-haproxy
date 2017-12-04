@@ -1,0 +1,24 @@
+---
+- name: "Check system"
+  include: checks.yml
+
+- name: "Creating user and group for HAProxy"
+  include: create_user.yml
+
+- name: "Install role requeriments"
+  include: requeriments.yml
+
+- name: "Install Haproxy"
+  include: install.yml
+
+- name: "Configure Haproxy"
+  include: configure.yml
+
+- name: "Create Haproxy service"  
+  include: include_services.yml
+
+- name: Start HAProxy 
+  service:
+    name: haproxy
+    enabled: yes
+    state: started

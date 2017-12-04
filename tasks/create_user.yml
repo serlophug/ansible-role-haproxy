@@ -1,0 +1,11 @@
+- name: Add Haproxy group
+  group:
+    name: "{{ haproxy_group }}"
+    state: present
+
+- name: Add Haproxy user
+  user:
+    name: "{{ haproxy_user }}"
+    comment: "HAProxy user"
+    group: "{{ haproxy_group }}"
+    system: yes

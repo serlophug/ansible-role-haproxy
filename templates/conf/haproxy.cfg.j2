@@ -1,0 +1,22 @@
+global
+    {%- for line in haproxy_global %} 
+    {{ line }}
+    {%- endfor %}
+
+
+defaults
+    {%- for line in haproxy_defaults %} 
+    {{ line }}
+    {%- endfor %}
+
+
+frontend http-in
+    bind {{ haproxy_frontend_address }}:{{ haproxy_frontend_port }}
+    default_backend servers
+
+backend servers
+    balance {{ haproxy_servers_balance }}  
+    {%- for line in haproxy_servers %} 
+    server {{ line }}
+    {%- endfor %}
+

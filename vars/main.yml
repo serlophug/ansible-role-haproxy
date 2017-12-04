@@ -1,0 +1,27 @@
+---
+# vars file for ansible-role-haproxy
+
+os_valid_distributions:
+  - RedHat
+  - CentOS
+  - Ubuntu
+
+os_minimum_versions:
+  RedHat: 7
+  CentOS: 7
+  Ubuntu: 16.04
+ 
+# HAProxy Install
+map_haproxy_versions:
+  1.8: 1.8.0
+  1.7: 1.7.9
+  1.6: 1.6.13
+  1.5: 1.5.19 
+haproxy_download_version: "{{ map_haproxy_versions[ haproxy_version ] }}"
+
+haproxy_tmp: "/tmp/haproxy"
+haproxy_unarchived_directory: "{{ haproxy_tmp }}/haproxy-{{ haproxy_download_version }}"
+haproxy_file: "haproxy-{{ haproxy_download_version }}.tar.gz"
+haproxy_mirror: "http://www.haproxy.org/download" # without /!!
+haproxy_url: "{{ haproxy_mirror }}/{{ haproxy_version }}/src/{{ haproxy_file }}"
+

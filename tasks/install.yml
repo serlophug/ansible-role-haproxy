@@ -1,0 +1,50 @@
+---
+- name: "Create required directories(if not exists)"
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+  with_items:
+    - "{{ haproxy_tmp }}"
+    - "{{ haproxy_config_dir }}"
+    - "{{ haproxy_log_dir }}"
+    - "{{ haproxy_run_dir }}"
+
+
+- name: "Download HAProxy {{ haproxy_version }}"
+  get_url: 
+    url: "{{ haproxy_url }}"
+    dest: "{{ haproxy_tmp }}/{{ haproxy_file }}"
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+  register: result
+  until: result|success
+  retries: 5
+  delay: 2
+
+- name: "Unarchive HAProxy in {{ haproxy_tmp }}"
+  unarchive: 
+    src: "{{ haproxy_tmp }}/{{ haproxy_file }}"
+    remote_src: yes 
+    dest: "{{ haproxy_tmp }}"
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+
+- name: "Build HAProxy"
+  command: "/usr/bin/make TARGET=generic USE_PCRE=1"
+  args: 
+    chdir: "{{ haproxy_unarchived_directory }}"
+
+# Make for ansible 2.1
+#  make:
+#    chdir: "{{ haproxy_unarchived_directory }}"
+#    target: generic
+#    params:
+#      CPU: generic
+#      USE_PCRE: 1
+
+- name: "Install HAProxy"
+  command: "/usr/bin/make install"
+  args: 
+    chdir: "{{ haproxy_unarchived_directory }}"

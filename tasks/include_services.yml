@@ -1,0 +1,17 @@
+- name: Create service for systemd 
+  template:
+    src: service/systemd.j2
+    dest: /lib/systemd/system/haproxy.service
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+    mode: 0777
+  when: ansible_service_mgr == "systemd"
+
+- name: Create service for upstart 
+  template:
+    src: service/upstart.j2
+    dest: /etc/init.d/haproxy
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+    mode: 0777
+  when: ansible_service_mgr == "upstart"

@@ -1,0 +1,7 @@
+- name: Create configuration file
+  template:
+    src: conf/haproxy.cfg.j2
+    dest: "{{ haproxy_config_dir }}/haproxy.cfg"
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+    mode: 0644

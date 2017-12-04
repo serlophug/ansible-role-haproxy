@@ -1,0 +1,113 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides: HAProxy
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start: 2 3 4 6
+# Default-Stop: 0 1 5
+# Short-Description: HAProxy service.
+# Description: Load balancer
+### END INIT INFO
+
+
+PID_FILE={{ haproxy_run_dir }}/haproxy.pid
+SERVICE_NAME="HAProxy"
+USER={{ haproxy_user }} 
+CONFIG_FILE={{ haproxy_config_dir}}/haproxy.cfg
+. /lib/lsb/init-functions
+
+do_start()
+{
+    su - $USER -c '/usr/local/sbin/haproxy -f {{ haproxy_config_dir}}{%- if haproxy_version|version_compare(1.7, "<") %}/haproxy.cfg{%- endif %} -D -p {{ haproxy_run_dir }}/haproxy.pid >{{ haproxy_log_dir }}/haproxy.log 2>{{ haproxy_log_dir }}/haproxy.error.log'
+    if [ -f $PID_FILE ]; then
+        # Check if all pids are running
+        for PID in $(cat $PID_FILE) ; do
+		    if ! ps -p $PID > /dev/null; then
+                return 1
+            fi 
+        done
+        return 0
+    else    
+        return 2
+    fi
+} 
+
+
+do_stop () {    
+    if [ -f $PID_FILE ]; then
+        for PID in $(cat $PID_FILE) ; do
+		    /bin/kill $PID 
+        done
+        rm $PID_FILE
+    fi    
+    return 0
+}
+
+do_status ()
+{
+    if [ -f $PID_FILE ]; then
+        # Check if all pids are running
+        for PID in $(cat $PID_FILE) ; do
+		    if ! ps -p $PID > /dev/null; then
+                return 1
+            fi 
+        done        
+        return 0
+    else        
+        return 2
+    fi
+}
+
+case "$1" in
+  start)
+    log_daemon_msg "Starting $SERVICE_NAME ..."
+    do_start
+    exit_flag=$?
+    case "$exit_flag" in
+	0)
+		log_daemon_msg "$SERVICE_NAME is successfully started"
+		;;
+	1)
+		log_daemon_msg "Something was wrong"
+		;;
+	*)
+		log_daemon_msg "$SERVICE_NAME is not running"
+		;;
+	esac
+	exit $exit_flag
+	;;
+  restart|reload|force-reload)
+    log_daemon_msg "Stopping $SERVICE_NAME"
+    do_stop
+    log_daemon_msg "Starting $SERVICE_NAME" 
+    do_start
+	;;
+  stop)
+    log_daemon_msg "Stopping $SERVICE_NAME"
+    do_stop 
+	;;
+  status)
+    do_status
+    exit_flag=$?
+	case "$exit_flag" in
+	0)
+		echo "$SERVICE_NAME is running"
+		;;
+	1)
+		echo "$SERVICE_NAME is dead"
+		;;
+	*)
+		echo "$SERVICE_NAME is not running"
+		;;
+	esac
+	exit $exit_flag
+  ;;
+  *)
+	echo "Usage: $0 start|stop|restart|status" >&2
+	exit 1
+	;;
+esac
+
+exit 0
+
