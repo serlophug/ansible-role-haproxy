@@ -3,7 +3,7 @@
 haproxy_group: haproxy
 haproxy_user: haproxy
 
-haproxy_version: 1.6
+haproxy_version: 1.8
 
 haproxy_config_dir: /etc/haproxy
 haproxy_log_dir: /var/log/haproxy
