@@ -1,15 +1,15 @@
 [Unit]
 Description=HAProxy Service
-Documentation=http://www.haproxy.org/download/1{{ haproxy_version }}/doc/configuration.txt
+Documentation=http://www.haproxy.org/download/{{ haproxy_version }}/doc/configuration.txt
 Wants=basic.target
 After=basic.target network.target
 
 [Service]
-Type=forking
+Type=simple
 PIDFile={{ haproxy_run_dir }}/haproxy.pid
 User={{ haproxy_user }} 
 Group={{ haproxy_group}} 
-ExecStart=/usr/local/sbin/haproxy -f {{ haproxy_config_dir}}{%- if haproxy_version|version_compare(1.7, "<") %}/haproxy.cfg{%- endif %} -D -p {{ haproxy_run_dir }}/haproxy.pid >{{ haproxy_log_dir }}/haproxy.log 2>{{ haproxy_log_dir }}/haproxy.error.log
+ExecStart=/bin/bash -c '/usr/local/sbin/haproxy -f {{ haproxy_config_dir}}{%- if haproxy_version|version_compare(1.7, "<") %}/haproxy.cfg{%- endif %} -D -p {{ haproxy_run_dir }}/haproxy.pid >{{ haproxy_log_dir }}/haproxy.log 2>{{ haproxy_log_dir }}/haproxy.error.log'
 ExecStop=for PID in $(cat $PIDFile); do /bin/kill $PID; done
 KillMode=process
 Restart=on-failure
