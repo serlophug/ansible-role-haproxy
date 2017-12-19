@@ -1,7 +1,7 @@
 {% if    | bool -%}
 userlist myusers
     {%- for user in haproxy_userlist %} 
-    user {{ user['user'] user['type'] user['password'] }}
+    user {{ user['user'] }} {{ user['type'] }} {{ user['password'] }}
     {%- endfor %}
 {%- endif %}
 
