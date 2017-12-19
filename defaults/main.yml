@@ -28,7 +28,9 @@ haproxy_frontend_port: 10000
 
 haproxy_servers_balance: roundrobin
 haproxy_servers: 
-  - "s1 172.17.0.4:80"
-  - "s2 172.17.0.5:80"
+  - "s1 172.17.0.3:80"
+  - "s2 172.17.0.4:80"
 
-  
+haproxy_basic_auth_enabled: true
+haproxy_userlist: 
+  - {"type": "insecure-password" , "user": "testuser", "password": "testpassw" } 

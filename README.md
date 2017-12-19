@@ -20,6 +20,11 @@ Role Variables
 - haproxy_frontend_port: Frontend port for HAProxy. Default: 10000
 - haproxy_servers_balance: Type of load balancer for HAProxy. Default: roundrobin
 - haproxy_servers (List\<String\>): Each element of this list is a backend server.
+- haproxy_basic_auth_enabled (Bool): Activate/desactivate the basic authorization.
+- haproxy_userlist (List\<Dict\>): Each element of this list is a dictionary with three items:
+  - type (String): type of password (insecure-password, password).
+  - user (String): username.
+  - password (String): password
 
 Example Playbook
 ----------------

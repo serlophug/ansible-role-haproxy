@@ -1,3 +1,10 @@
+{% if    | bool -%}
+userlist myusers
+    {%- for user in haproxy_userlist %} 
+    user {{ user['user'] user['type'] user['password'] }}
+    {%- endfor %}
+{%- endif %}
+
 global
     {%- for line in haproxy_global %} 
     {{ line }}
@@ -12,7 +19,14 @@ defaults
 
 frontend http-in
     bind {{ haproxy_frontend_address }}:{{ haproxy_frontend_port }}
+    {% if haproxy_basic_auth_enabled | bool -%}
+    acl auth_ok http_auth(myusers)
+    http-request allow if auth_ok    
+    use_backend servers if auth_ok
+    http-request deny
+    {%- else %}
     default_backend servers
+    {%- endif %}
 
 backend servers
     balance {{ haproxy_servers_balance }}  

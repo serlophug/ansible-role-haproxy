@@ -11,6 +11,13 @@ os_minimum_versions:
   CentOS: 7
   Ubuntu: 16.04
  
+list_typebalance:
+  - roundrobin
+  - static-rr
+  - leastconn
+  - first
+  - source
+
 # HAProxy Install
 map_haproxy_versions:
   1.8: 1.8.0

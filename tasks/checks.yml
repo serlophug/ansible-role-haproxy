@@ -9,5 +9,13 @@
     msg: "{{ ansible_distribution_version}} of {{ ansible_distribution }} is not supported"
   when: ansible_distribution_version|version_compare(os_minimum_versions[ansible_distribution], '<')
 
-# ha_proxy versions esta en map_haproxy_versions
-# balance in cfg is valid
+- name: Checking haproxy version is valid
+  fail:
+    msg: "{{ haproxy_version }} is not supported"
+  when: haproxy_version not in map_haproxy_versions
+
+- name: Checking haproxy type of balance is valid
+  fail:
+    msg: "{{ haproxy_servers_balance }} is not supported"
+  when: haproxy_servers_balance not in list_typebalance
+
