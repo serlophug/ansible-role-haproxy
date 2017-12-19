@@ -1,7 +1,7 @@
-{% if    | bool -%}
+{% if haproxy_basic_auth_enabled | bool -%}
 userlist myusers
-    {%- for user in haproxy_userlist %} 
-    user {{ user['user'] }} {{ user['type'] }} {{ user['password'] }}
+    {%- for infouser in haproxy_userlist %} 
+    user {{ infouser['user'] }} {{ infouser['type'] }} {{ infouser['password'] }}
     {%- endfor %}
 {%- endif %}
 
