@@ -1,0 +1,21 @@
+- name: Install Pip for CentOS
+  yum: name=python-devel,python-pip update_cache=yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install Pip for Debian
+  yum: name=python-dev,python-pip update_cache=yes
+  when: ansible_os_family == "Debian"
+
+- name: Install dependencies for docker management
+  pip: name=docker-py
+
+- name: Launch HAProxy container
+  docker_container:
+    name: "{{ haproxy_docker_container_name }}"
+    image: "{{ haproxy_docker_image }}:{{ haproxy_version }}"
+    state: started
+    ports:
+      - "{{ haproxy_docker_net_interface }}:{{ haproxy_frontend_port }}:{{ haproxy_frontend_port }}"
+    volumes:
+    - "{{ haproxy_config_dir }}:/usr/local/etc/haproxy"
+    restart: yes

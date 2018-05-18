@@ -1,24 +1,39 @@
 ---
-- name: "Check system"
-  include: checks.yml
-
-- name: "Creating user and group for HAProxy"
-  include: create_user.yml
-
-- name: "Install role requeriments"
-  include: requeriments.yml
-
-- name: "Install Haproxy"
-  include: install.yml
+- name: "Create config directory (if not exists)"
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: "{{ haproxy_user }}"
+    group: "{{ haproxy_group }}"
+  with_items:
+    - "{{ haproxy_config_dir }}"
 
 - name: "Configure Haproxy"
   include: configure.yml
 
-- name: "Create Haproxy service"  
-  include: include_services.yml
+- block:
+  - name: "Check system"
+    include: checks.yml
 
-- name: Start HAProxy 
-  service:
-    name: haproxy
-    enabled: yes
-    state: started
+  - name: "Creating user and group for HAProxy"
+    include: create_user.yml
+
+  - name: "Install role requeriments"
+    include: requeriments.yml
+
+  - name: "Install Haproxy"
+    include: install.yml
+
+  - name: "Create Haproxy service"  
+    include: include_services.yml
+
+  - name: Start HAProxy 
+    service:
+      name: haproxy
+      enabled: yes
+      state: started
+  when: not haproxy_use_docker
+
+- include: docker.yml
+  when: haproxy_use_docker
+

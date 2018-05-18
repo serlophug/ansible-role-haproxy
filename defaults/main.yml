@@ -5,6 +5,13 @@ haproxy_user: haproxy
 
 haproxy_version: 1.8
 
+# Docker variables
+haproxy_use_docker: false
+haproxy_docker_container_name: haproxy
+haproxy_docker_net_interface: 0.0.0.0
+haproxy_docker_image: haproxy
+
+
 haproxy_config_dir: /etc/haproxy
 haproxy_log_dir: /var/log/haproxy
 haproxy_run_dir: /var/run/haproxy

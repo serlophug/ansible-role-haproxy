@@ -1,5 +1,5 @@
 ---
-- name: "Create required directories(if not exists)"
+- name: "Create tmp directories (if not exists)"
   file:
     dest: "{{ item }}"
     state: directory
@@ -7,10 +7,8 @@
     group: "{{ haproxy_group }}"
   with_items:
     - "{{ haproxy_tmp }}"
-    - "{{ haproxy_config_dir }}"
     - "{{ haproxy_log_dir }}"
     - "{{ haproxy_run_dir }}"
-
 
 - name: "Download HAProxy {{ haproxy_version }}"
   get_url: 
